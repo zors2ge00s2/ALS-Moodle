@@ -27,8 +27,8 @@ RUN apt-get update && \
 		php-gd libapache2-mod-php postfix wget supervisor php-pgsql curl libcurl4 \
 		libcurl3-dev php-curl php-xmlrpc php-intl php-mysql git-core php-xml php-mbstring php-zip php-soap cron php-ldap && \
 	cd /tmp && \
-	git clone --single-branch --branch master https://github.com/zors2ge00s2/Moodle-Dev.git --depth=1 && \
-	mv Moodle-Dev moodle && \
+	git clone --single-branch --branch master https://github.com/zors2ge00s2/ALS-Moodle.git --depth=1 && \
+	mv ALS-Moodle/html moodle && \
 	mv /tmp/moodle/* /var/www/html/ && \
 	rm /var/www/html/index.html && \
 	chown -R www-data:www-data /var/www/html && \

@@ -234,7 +234,7 @@ class condition extends \core_availability\condition {
 		    $user_icq = 0;
 	    }
 	    else{
-		//    $user_icq--;
+		    $user_icq--;
 	    }
 	    $lowest = strtotime("-$user_icq day");
 	    $calc = strtotime("+$this->relativenumber $x", $lowest);
