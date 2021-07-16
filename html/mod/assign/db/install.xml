@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/assign/db" VERSION="20210324" COMMENT="XMLDB file for Moodle mod/assign"
+<XMLDB PATH="mod/assign/db" VERSION="20210716" COMMENT="XMLDB file for Moodle mod/assign"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -168,7 +168,7 @@
         <FIELD NAME="groupc" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="groupd" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="groupe" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="is_assign" TYPE="binary" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="is_assign" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

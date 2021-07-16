@@ -98,7 +98,17 @@ function xmldb_assign_upgrade($oldversion) {
         // Assign savepoint reached.
         upgrade_mod_savepoint(true, 2020061571, 'assign');
     }
+  if ($oldversion < 2021071621) {
 
+	           // Changing type of field is_assign on table assign_destination to text.
+	           $table = new xmldb_table('assign_destination');
+	           $field = new xmldb_field('is_assign', XMLDB_TYPE_TEXT, null, null, null, null, null, 'groupe');
+	           // Launch change of type for field is_assign.
+	           $dbman->change_field_type($table, $field);
+	           // Assign savepoint reached.
+	            upgrade_mod_savepoint(true, 2021071621, 'assign');
+  }
+	  //
 
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.
