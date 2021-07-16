@@ -336,19 +336,20 @@
 	
     if(!groups_is_member(1, $USER->id) && !groups_is_member(2, $USER->id)){
         //echo "<a class='pref-link' href='/lib/pref.php?id=$course->id'><u> Please click here to set your activity preferences</u> </a>";
+   	
     }
 	
     // CAUTION, hacky fundamental variable defintion to follow!
     // Note that because of the way course fromats are constructed though
     // inclusion we pass parameters around this way..
-    if(has_capability('mod/assign:addinstance', $context) || (groups_is_member(1, $USER->id) || groups_is_member(2, $USER->id))){
-
+   // if(has_capability('mod/assign:addinstance', $context) /*|| (groups_is_member(1, $USER->id) || groups_is_member(2, $USER->id))*/){
+    
     $displaysection = $section;
 
     // Include the actual course format.
     require($CFG->dirroot .'/course/format/'. $course->format .'/format.php');
     // Content wrapper end.
-    }
+    //}
     if($days<21){
 	    echo "Thank you and see you tomorrow!";	    
     }
@@ -359,7 +360,7 @@
 <p dir=\"ltr\" style=\"text-align: left;\"><br></p>";
     }
     echo "<br>";
-    echo "<a class='pref-link' href='/lib/change_day.php?id=$course->id'><u> TESTERS CHANGE DAY</u> </a>";
+    //echo "<a class='pref-link' href='/lib/change_day.php?id=$course->id'><u> TESTERS CHANGE DAY</u> </a>";
     //echo "<a style=\"background-color:white; padding: 1em 1em; border-radius:8px;\" href=\"/lib/change_day.php?id=$course->id\"> TESTERS CHANGE DAY </a>";
     echo html_writer::end_tag('div');
 

@@ -2325,7 +2325,8 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 	$a = $DB->get_records_sql($sql);
 	if($a){
 		$jump_to = reset($a);
-		echo '<h2><a style="background-color:white;  border-radius:8px; padding=2em 2em;" href="http://mindful.rc.fas.harvard.edu/mod/assign/view.php?id='. $jump_to->origin .'"> Please click here to get started</a></h2>';
+		echo "<br>";
+		echo '<h2><a style="background-color:white;  border-radius:8px; padding: 0.2em;background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);" href="https://mindful.rc.fas.harvard.edu/mod/assign/view.php?id='. $jump_to->origin .'"> Please click here to get started</a></h2>';
 	}
 	else{
 		//print_r($sql);

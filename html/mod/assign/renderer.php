@@ -662,7 +662,7 @@ class mod_assign_renderer extends plugin_renderer_base {
 		//$o .= "submissions!";
 		//$o .= "submission enabled: " .$status->submissionsenabled;
 		//$o .= print_r($status->submission);
-	        $o .= $this->output->heading(get_string('submissionstatusheading', 'assign') . ":", 3);
+		//$o .= $this->output->heading(get_string('submissionstatusheading', 'assign') /*. ":"*/, 3);
 
 	
 	// $o .= $this->output->container_start('submissionstatustable');
@@ -1010,7 +1010,8 @@ class mod_assign_renderer extends plugin_renderer_base {
         global $CFG;
         global $USER;
         global $DB;
-        require_once($CFG->dirroot. '/group/lib.php');
+	require_once($CFG->dirroot. '/group/lib.php');
+	//each group is one of the exercise preference options.
         $data->groupa = groups_is_member(1, $USER->id) ? 'yes' : 'no';//shorthand if statement
         $data->groupb = groups_is_member(3, $USER->id) ? 'yes' : 'no';
         $data->groupc = groups_is_member(5, $USER->id) ? 'yes' : 'no';
@@ -1025,7 +1026,9 @@ class mod_assign_renderer extends plugin_renderer_base {
         $role = $DB->get_record_sql($role_sql);
         if($role->roleid != 9 && $role->roleid !=10){
                 $role->roleid = 9;
-        }
+	}
+	//this selects the next assignment, by finding the database entry with an origin that's the same as the page the user 
+	//is currently on, and with the same other variables matching as wel, like the right role and exercise preferences
         $sql = "SELECT * FROM mdl_assign_destination as dest WHERE origin = $status->coursemoduleid AND (dest.groupa LIKE (CASE WHEN dest.groupa LIKE '%yes%' OR dest.groupa LIKE '%no%' THEN '%$data->groupa%' WHEN dest.groupa LIKE '%' THEN '%' END))
 	AND (dest.groupb LIKE (CASE WHEN dest.groupb LIKE '%yes%' OR dest.groupb LIKE '%no%' THEN '%$data->groupb%' WHEN dest.groupb LIKE '%' THEN '%' END))
 	AND (dest.groupc LIKE  (CASE WHEN dest.groupc LIKE '%yes%' OR dest.groupc LIKE '%no%' THEN '%$data->groupc%' WHEN dest.groupc LIKE '%' THEN '%' END)) 
@@ -1034,7 +1037,10 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 //$sql = "SELECT * FROM mdl_user WHERE username ='$username';";
         //$o .= $sql;
 	$a = $DB->get_record_sql($sql);
-        $module = $a->is_assign ? 'assign' : 'page';
+	//$module = $a->is_assign ? 'assign' : 'page';
+	$module = 'assign';
+	//similar to finding the next assignment, except this time it finds the exercise with the current page as its destination
+	//which will be the previous page
 	$prev_sql = "SELECT * FROM mdl_assign_destination as dest WHERE destination = $status->coursemoduleid AND  (dest.groupa LIKE (CASE WHEN dest.groupa LIKE '%yes%' OR dest.groupa LIKE '%no%' THEN '%$data->groupa%' WHEN dest.groupa LIKE '%' THEN '%' END))
 	AND (dest.groupb LIKE (CASE WHEN dest.groupb LIKE '%yes%' OR dest.groupb LIKE '%no%' THEN '%$data->groupb%' WHEN dest.groupb LIKE '%' THEN '%' END))
 	AND (dest.groupc LIKE  (CASE WHEN dest.groupc LIKE '%yes%' OR dest.groupc LIKE '%no%' THEN '%$data->groupc%' WHEN dest.groupc LIKE '%' THEN '%' END)) 
@@ -1047,24 +1053,29 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 	//echo "<br>";
 	$o .= '<br>';
 	if($a && $a->destination > 0){
-                $o .= '<h2><a style="background-color:white;  border-radius:8px; padding=2em 2em; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module .'/view.php?id='. $a->destination .'"> Please click here to continue</a></h2>';
-        }
+                $o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module .'/view.php?id='. $a->destination .'"> Please click here to continue</a></h3>';
+	}
+	//if there's no available next page, then it goes in this block, which links users to the "Thank you" page
         else{
 		 $user_sql = 'SELECT id, icq FROM mdl_user WHERE id=' . $USER->id;
                 $user= $DB->get_record_sql($user_sql, NULL, 0, 0);
 		 //$o .= $user->icq;
 		 //$o .= $user_sql;
-		 
+		 //if the user is on their last day of the course, it takes you to the special final day Thank you
 		 if($user->icq >=21){
- 			$o .= '<h2><a style="background-color:white;  border-radius:8px; padding=2em 2em; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=167"> Please click here to continue</a></h2>';
-		 }else{
-		$o .= '<h2><a style="background-color:white;  border-radius:8px; padding=2em 2em; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=166"> Please click here to continue</a></h2>';
+ 			$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=167"> Please click here to continue</a></h3>';
+		 }
+		 //otherwise it takes them to the regular thank you page
+		 else{
+		$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=166"> Please click here to continue</a></h3>';
 		 }
 		 }
-	$module2 = $prev->is_assign ? 'assign' : 'page';
+	//$module2 = $prev->is_assign ? 'assign' : 'page';
+	$module2 = 'assign'; //holdover from the days when we used things other than Assignments for everything, kept here in case of re-implementing regular pages
+
 	if($prev){
 		//$o.= "<br>";
-$o .= '<h2><a style="background-color:white;  border-radius:8px; padding=2em 2em; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module2 .'/view.php?id='. $prev->origin .'"> Click here to return to the previous activity</a></h2>';
+$o .= '<br><h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module2 .'/view.php?id='. $prev->origin .'"> Click here to return to the previous activity</a></h3>';
 	}
         //$o .= print_r($a);
         //$o .= $USER->id;

@@ -230,10 +230,11 @@ class condition extends \core_availability\condition {
 	    }*/
 	    $sql = 'SELECT user.icq as uedate FROM {user} user WHERE user.id = :userid';
 	    $user_icq = $DB->get_field("user", "icq", array('id'=>$USER->id));
+	    $arr= getdate(strtotime("now"));
 	    if(!$user_icq){
 		    $user_icq = 0;
 	    }
-	    else{
+	    if($arr['hours'] >= 6){
 		    $user_icq--;
 	    }
 	    $lowest = strtotime("-$user_icq day");

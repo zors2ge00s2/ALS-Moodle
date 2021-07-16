@@ -47,7 +47,8 @@ GROUP BY mapping.userid) as a RIGHT JOIN mdl_user as b ON a.userid = b.id';
        		$users = $DB->get_records_sql($user_sql, NULL, 0, 0);
 		echo "maybe so";
 		//echo "icq: " . $user->icq;
-	foreach($users as $user){
+		foreach($users as $user){
+			echo "user id:" . $user->id;
 		$data->groupa = groups_is_member(1, $user->id) ? 'yes' : 'no';//shorthand if statement
         	$data->groupb = groups_is_member(3, $user->id) ? 'yes' : 'no';
         	$data->groupc = groups_is_member(5, $user->id) ? 'yes' : 'no';
@@ -69,9 +70,11 @@ GROUP BY mapping.userid) as a RIGHT JOIN mdl_user as b ON a.userid = b.id';
 		//$user = $DB->get_record_sql($user_sql);
 		//echo "icq: " . $user->icq;
 		//$user->icq = 1;
-		$sql = "SELECT * FROM mdl_assign_destination as dest WHERE (dest.groupa LIKE '% 'OR dest.groupa LIKE '%$data->groupa%') AND (dest.groupb LIKE '%$data->groupb%' OR dest.groupb LIKE '% ')
-        	AND (dest.groupc LIKE '%$data->groupc%' OR dest.groupc LIKE '% ') AND (dest.groupd LIKE '%$data->groupd%' OR dest.groupd LIKE '% ')
-        	AND (dest.groupe LIKE '%$data->groupe%' OR dest.groupe LIKE '% ') AND dest.roleid = $role->roleid AND dest.day= $user->icq";
+		$sql = "SELECT * FROM mdl_assign_destination as dest WHERE (dest.groupa LIKE (CASE WHEN dest.groupa LIKE '%yes%' OR dest.groupa LIKE '%no%' THEN '%$data->groupa%' WHEN dest.groupa LIKE '%' THEN '%' END))
+		               AND (dest.groupb LIKE (CASE WHEN dest.groupb LIKE '%yes%' OR dest.groupb LIKE '%no%' THEN '%$data->groupb%' WHEN dest.groupb LIKE '%' THEN '%' END))
+		               AND (dest.groupc LIKE  (CASE WHEN dest.groupc LIKE '%yes%' OR dest.groupc LIKE '%no%' THEN '%$data->groupc%' WHEN dest.groupc LIKE '%' THEN '%' END))
+			       AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '%no%' THEN '%$data->groupd%' WHEN dest.groupd LIKE '%' THEN '%' END))
+		        AND (dest.groupe LIKE (CASE WHEN dest.groupe LIKE '%yes%' OR dest.groupe LIKE '%no%' THEN '%$data->groupe%' WHEN dest.groupe LIKE '%' THEN '%' END)) AND dest.roleid = $role->roleid AND dest.day= $user->icq";
 		$assignments = $DB->get_records_sql($sql, NULL, 0, 0);
 		print_r($assignments);
 		$count = 0;
@@ -114,6 +117,8 @@ GROUP BY mapping.userid) as a RIGHT JOIN mdl_user as b ON a.userid = b.id';
 			print_r($completed);
 		}
 		$completed_count = count($completed);
+		echo "total: " .$total_count;
+		echo "completed: " .$completed_count; 
 		if($total_count - $completed_count <=0){
 			echo "done!";
 			$user_days = $user->icq + 1;
@@ -122,7 +127,16 @@ GROUP BY mapping.userid) as a RIGHT JOIN mdl_user as b ON a.userid = b.id';
 				$admin_user = $DB->get_record("user", array('id'=>2));
 				echo email_to_user($admin_user, $admin_user, "User has completed course!", "The user " . $user->firstname . ' has completed the course! Their email address is ' . $user->email);
 			}
-		}
+			else
+				$emails = array(1=> "Here is your daily reminder to check out today's cool new exercises at http://mindful.rc.fas.harvard.edu! See you there!",
+					2=> "Come visit http://mindful.rc.fas.harvard.edu to see today's mindfulness exercises.",
+					3=> "There is new content available at http://mindful.rc.fas.harvard.edu, come check it out.",        );
+				$num = rand(1,3);
+				if($user->id == 9){
+					echo email_to_user($user, $admin_user, "Daily Exercises available", $emails[$num]);
+				}
+				}
+		
 	}
 	}
 

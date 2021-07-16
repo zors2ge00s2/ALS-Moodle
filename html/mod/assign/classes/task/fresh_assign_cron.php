@@ -74,7 +74,7 @@ $courseid = 13;
 			//	echo "num: " . $num;
 			//	echo "<br>";
 			//	echo $emails[$num];
-				echo email_to_user($admin_user, $admin_user, "Daily Exercises available", $emails[$num]);
+				//echo email_to_user($user, $admin_user, "Daily Exercises available", $emails[$num]);
 			//	echo "<br>";
 			//}	
 		}
