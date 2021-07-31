@@ -897,7 +897,17 @@ class mod_assign_renderer extends plugin_renderer_base {
         //$o .= $this->output->box_end();
 
         // Links.
+	//
+	//disabling submissions for Control group
+	global $USER; 
+	$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";
+	global $DB;
 
+	$role = $DB->get_record_sql($role_sql);
+	$comments = true;
+	if($role->roleid ==12){
+		$comments = false;		
+	}	
         //this edit window isn't resilient to daylight savings for instance, but would only be off by an hour
         $edit_window = 3*24*60*60;
         $three_days_later = $submission->timemodified + $edit_window;
@@ -914,8 +924,14 @@ class mod_assign_renderer extends plugin_renderer_base {
                 if (!$submission || $submission->status == ASSIGN_SUBMISSION_STATUS_NEW) {
                     $o .= $this->output->box_start('generalbox submissionaction');
                     $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editsubmission');
-                    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
-                                                       get_string('addsubmission', 'assign'), 'get');
+		    
+		    $add_submission = get_string('addsubmission', 'assign');
+		    //This is where the submission box for control group users has its text set
+		    if($role->roleid == 12){
+			    $add_submission= "Please add your input";
+		    }
+		    $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
+                                                       $add_submission, 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
                     $o .= get_string('addsubmission_help', 'assign');
                     $o .= $this->output->box_end();
@@ -985,8 +1001,8 @@ class mod_assign_renderer extends plugin_renderer_base {
                         $plugin->has_user_summary() &&
                         $pluginshowsummary
                     ) {
-                        if(strcmp($plugin->get_name(), 'Submission comments') == 0){
-                                                 }
+			//Here's where the comments actually get hidden for control group users
+			if(strcmp($plugin->get_name(), 'Submission comments') == 0 && $comments){
                         $displaymode = assign_submission_plugin_submission::SUMMARY;
                         $pluginsubmission = new assign_submission_plugin_submission($plugin,
                             $submission,
@@ -999,7 +1015,8 @@ class mod_assign_renderer extends plugin_renderer_base {
                             $cell2content = $this->render($pluginsubmission);
                             $o .= $this->output->heading($cell2content, 3);
                             //$this->add_table_row_tuple($t, $cell1content, $cell2content);
-                        }
+			}
+			}
                     }
                 }
             }
@@ -1024,7 +1041,7 @@ class mod_assign_renderer extends plugin_renderer_base {
 	// exists, you would add a link to it
 	$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";
         $role = $DB->get_record_sql($role_sql);
-        if($role->roleid != 9 && $role->roleid !=10){
+        if($role->roleid != 9 && $role->roleid !=10 && $role->roleid !=12){
                 $role->roleid = 9;
 	}
 	//this selects the next assignment, by finding the database entry with an origin that's the same as the page the user 
@@ -1053,7 +1070,7 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 	//echo "<br>";
 	$o .= '<br>';
 	if($a && $a->destination > 0){
-                $o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module .'/view.php?id='. $a->destination .'"> Please click here to continue</a></h3>';
+                $o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #b3d3da 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module .'/view.php?id='. $a->destination .'"> Please click here to continue</a></h3>';
 	}
 	//if there's no available next page, then it goes in this block, which links users to the "Thank you" page
         else{
@@ -1062,20 +1079,30 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 		 //$o .= $user->icq;
 		 //$o .= $user_sql;
 		 //if the user is on their last day of the course, it takes you to the special final day Thank you
-		 if($user->icq >=21){
- 			$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=167"> Please click here to continue</a></h3>';
+		 $thank_you_pageid = 166;
+		 if($user->icq >=21 && $role->roleid != 12){
+			 $thank_you_pageid =167;
 		 }
+		 if($role->roleid == 12){
+			if($user->icq >= 21){
+				$thank_you_pageid=529;
+			}
+			else{
+				$thank_you_pageid=528;
+			}
+		 }
+		 //if($user->icq >=21){
+ 		//	$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #b3d3da 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=167"> Please click here to continue</a></h3>';
+		 //}
 		 //otherwise it takes them to the regular thank you page
-		 else{
-		$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=166"> Please click here to continue</a></h3>';
-		 }
+		$o .= '<h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #b3d3da 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/page/view.php?id=' .$thank_you_pageid. '"> Please click here to continue</a></h3>';
 		 }
 	//$module2 = $prev->is_assign ? 'assign' : 'page';
 	$module2 = 'assign'; //holdover from the days when we used things other than Assignments for everything, kept here in case of re-implementing regular pages
 
 	if($prev){
 		//$o.= "<br>";
-$o .= '<br><h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module2 .'/view.php?id='. $prev->origin .'"> Click here to return to the previous activity</a></h3>';
+$o .= '<br><h3><a style="background:linear-gradient(to bottom, #bddbfa 5%, #b3d3da 100%); padding:0.2em;  border-radius:8px; border: 3px solid black;" href="http://mindful.rc.fas.harvard.edu/mod/'. $module2 .'/view.php?id='. $prev->origin .'"> Click here to return to the previous activity</a></h3>';
 	}
         //$o .= print_r($a);
         //$o .= $USER->id;

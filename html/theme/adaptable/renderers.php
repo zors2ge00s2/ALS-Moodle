@@ -455,8 +455,15 @@ class theme_adaptable_core_renderer extends core_renderer {
 		\theme_adaptable\toolbox::getfontawesomemarkup('user'));
 	if(count($test)>0){
 		$course = array_values($test)[0]->id;
+		global $USER;
+		$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";
+		global $DB; 
+		$role = $DB->get_record_sql($role_sql); 	
+		
+		if($role->roleid == 9){	
 		$usermenuitems[] = array('enableeditprofile', false, $CFG->wwwroot.'/lib/pref.php?id=' . $course, 'Activity Preferences',
-		\theme_adaptable\toolbox::getfontawesomemarkup('cog'));
+			\theme_adaptable\toolbox::getfontawesomemarkup('cog'));
+		}
 	}
         $usermenuitems[] = array('enableaccesstool', false, $CFG->wwwroot.'/local/accessibilitytool/manage.php',
             get_string('enableaccesstool', 'theme_adaptable'), \theme_adaptable\toolbox::getfontawesomemarkup('low-vision'));

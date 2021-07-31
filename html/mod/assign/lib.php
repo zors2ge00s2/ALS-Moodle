@@ -1571,7 +1571,8 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
         }
 
         // The user has not yet submitted anything. Show the addsubmission link.
-        $name = get_string('addsubmission', 'assign');
+	$name = get_string('addsubmission', 'assign');
+	
         $url = new \moodle_url('/mod/assign/view.php', [
             'id' => $cm->id,
             'action' => 'editsubmission'

@@ -2296,7 +2296,12 @@ class core_course_renderer extends plugin_renderer_base {
 	if(!$days){
 		$days = 1;
 	}
-	$introduction = file_get_contents('http://mindful.rc.fas.harvard.edu/lib/daily_posts/day_'.$days.'_introduction.txt');
+	$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";                                                                 $role = $DB->get_record_sql($role_sql);                                                                                                    if($role->roleid != 9 && $role->roleid !=10 && $role->roleid != 12){                                                                               $role->roleid = 9;                                                                                                                 }
+	$days_text = $days;
+	if($role->roleid == 12){
+		$days_text .="_control";	
+	}
+	$introduction = file_get_contents('http://mindful.rc.fas.harvard.edu/lib/daily_posts/day_'.$days_text.'_introduction.txt');
 	if(!$introduction){
 		$introduction = "Welcome to Day " . $days;
 	}
@@ -2309,10 +2314,10 @@ class core_course_renderer extends plugin_renderer_base {
         $data->groupd = groups_is_member(7, $USER->id) ? 'yes' : 'no';
 	$data->groupe = groups_is_member(9, $USER->id) ? 'yes' : 'no';
 	$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";
-	$role = $DB->get_record_sql($role_sql);
-	if($role->roleid != 9 && $role->roleid !=10){
+	/*$role = $DB->get_record_sql($role_sql);
+	if($role->roleid != 9 && $role->roleid !=10 && $role->roleid != 12){
 		$role->roleid = 9;
-	}
+	}*/
 	$sql = "SELECT * FROM mdl_assign_destination as dest WHERE  (dest.groupa LIKE (CASE WHEN dest.groupa LIKE '%yes%' OR dest.groupa LIKE '%no%' THEN '%$data->groupa%' WHEN dest.groupa LIKE '%' THEN '%' END))
 	AND (dest.groupb LIKE (CASE WHEN dest.groupb LIKE '%yes%' OR dest.groupb LIKE '%no%' THEN '%$data->groupb%' WHEN dest.groupb LIKE '%' THEN '%' END))
 	AND (dest.groupc LIKE  (CASE WHEN dest.groupc LIKE '%yes%' OR dest.groupc LIKE '%no%' THEN '%$data->groupc%' WHEN dest.groupc LIKE '%' THEN '%' END)) 
@@ -2325,8 +2330,8 @@ AND (dest.groupd LIKE  (CASE WHEN dest.groupd LIKE '%yes%' OR dest.groupd LIKE '
 	$a = $DB->get_records_sql($sql);
 	if($a){
 		$jump_to = reset($a);
-		echo "<br>";
-		echo '<h2><a style="background-color:white;  border-radius:8px; padding: 0.2em;background: linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);" href="https://mindful.rc.fas.harvard.edu/mod/assign/view.php?id='. $jump_to->origin .'"> Please click here to get started</a></h2>';
+		echo "<br><br>";
+		echo '<h3><a style="background-color:white;  border-radius:8px; padding: 0.2em;background: linear-gradient(to bottom, #bddbfa 5%, #b3d3da 100%);" href="https://mindful.rc.fas.harvard.edu/mod/assign/view.php?id='. $jump_to->origin .'"> Please click here to get started</a></h3>';
 	}
 	else{
 		//print_r($sql);

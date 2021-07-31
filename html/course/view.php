@@ -292,15 +292,21 @@
                 JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)";
 	//$enrolments = $DB->get_records_sql($sql, $sql_param, 0, 0);
 	//echo array_values($enrolments)[0]->timestart;
-	//$enrolldate = new DateTime(date('Y-m-d', array_values($enrolments)[0]->timestart) /*'2020-01-27'*/);
+	//$enrolldate = new DateTime(date('Y-m-d', array_values($enrolments)[0]->timestart));
 	//$currdate =  new DateTime(date('Y-m-d', time()));
 	//$interval = date_diff($enrolldate, $currdate);
 	//$days= $interval->format('%a');
   	//$days += 1;
 	$days = $DB->get_field("user", "icq", array('id'=>$USER->id));
+	$roleid = $DB->get_field("role_assignments", "roleid", array('id'=>$USER->id));
 	if(!$days){
 		$days = 1;
 	}
+	if($roleid == 12){
+		$days .= "_control";
+	}
+//	print_r($roleid);
+//	echo $days;
     	//$days = "8"; 
     $ends = array('th','st','nd','rd','th','th','th','th','th','th');
 	if (($days %100) >= 11 && ($days%100) <= 13)
@@ -325,8 +331,9 @@
 
 	}
 
-	$sql = "SELECT u.id, u.confirmed FROM {user} u WHERE u.id = :userid";
-	$usr = $DB->get_record_sql($sql, $sql_param, 0, 0);
+	 
+//	$sql = "SELECT u.id, u.confirmed FROM {user} u WHERE u.id = :userid";
+//	$usr = $DB->get_record_sql($sql, $sql_param, 0, 0);
 	//if($usr->confirmed== 0){
 	//	echo "Please check your email for an account confirmation email and click on the confirmation link in it. Thanks!";
 	//	echo "<br><br>";

@@ -67,13 +67,13 @@ global $DB;
 		$data->groupc = trim($arr[4]);
 		$data->groupd = trim($arr[5]);
 		$data->groupe = trim($arr[6]);
-		$data->is_assign = trim($arr[7]);
-		$data->day = intval(trim($arr[8]));
-		$data->roleid = intval(trim($arr[9]));
-		//print_r($data);
-
-		$a = $DB->get_record("assign_destination", get_object_vars($data));
-		if(!$a && $data->origin){
+		//$data->is_assign = trim($arr[7]);
+		$data->day = intval(trim($arr[7]));
+		$data->roleid = intval(trim($arr[8]));
+		print_r($data);
+		//don't need to check if the record exists if we're wiping it clean anyway
+		//$a = $DB->get_record("assign_destination", get_object_vars($data));
+		if(/*!$a &&*/ $data->origin){
 			//echo "origin:" . $data->origin;
 			//echo "<br>";
 			if($DB->insert_record("assign_destination", $data)){

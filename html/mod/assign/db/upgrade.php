@@ -108,7 +108,15 @@ function xmldb_assign_upgrade($oldversion) {
 	           // Assign savepoint reached.
 	            upgrade_mod_savepoint(true, 2021071621, 'assign');
   }
-	  //
+    if($oldversion <2021072121){
+	$table = new xmldb_table('assign_destination');
+	$field = new xmldb_field('is_assign');
+	
+	if($dbman->field_exists($table, $field)){
+		$dbman->drop_field($table, $field);
+	}
+	upgrade_mod_savepoint(true, 2021072121, 'assign');	
+    }
 
     // Automatically generated Moodle v3.7.0 release upgrade line.
     // Put any upgrade step following this.

@@ -533,7 +533,7 @@ class renderer extends \core_user\output\myprofile\renderer {
         // Process the form.
         editprofile::process_form(true, $editprofileform);
 
-        return $editprofile;
+	return $editprofile;
     }
 
     /**

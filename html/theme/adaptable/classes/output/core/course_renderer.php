@@ -942,8 +942,11 @@ class course_renderer extends \core_course_renderer {
      */
     public function submission_cta(cm_info $mod, \theme_adaptable\activity_meta $meta) {
         global $CFG;
-
-        if (empty($meta->submissionnotrequired)) {
+	global $USER;
+	global $DB;
+	$role_sql = "SELECT * FROM mdl_role_assignments WHERE userid = $USER->id";
+	$role = $DB->get_record_sql($role_sql);
+	if (empty($meta->submissionnotrequired)) {
 
             $url = $CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id;
 
@@ -954,14 +957,19 @@ class course_renderer extends \core_course_renderer {
                     $submittedonstr = ' '.userdate($meta->timesubmitted, get_string('strftimedate', 'langconfig'));
                 }
                 $message = html_writer::tag('i', '&nbsp;', array('class' => 'fa fa-check')) . $meta->submittedstr.$submittedonstr;
-            } else {
-                $warningstr = $meta->draft ? $meta->draftstr : $meta->notsubmittedstr;
-                $warningstr = $meta->reopened ? $meta->reopenedstr : $warningstr;
-                $message = $warningstr;
-                $message = html_writer::tag('i', '&nbsp;', array('class' => 'fa fa-info-circle')) . $message;
-            }
-
-            return html_writer::link($url, $message);
+	    } else {
+			
+		
+                	$warningstr = $meta->draft ? $meta->draftstr : $meta->notsubmittedstr;
+                	$warningstr = $meta->reopened ? $meta->reopenedstr : $warningstr;
+               		$message = $warningstr;
+                	$message = html_writer::tag('i', '&nbsp;', array('class' => 'fa fa-info-circle')) . $message;
+		
+		}
+	    	//this is the line where "Not yet finished" is hid from Control course users
+	    if($role->roleid != 12){
+			return html_writer::link($url, $message);
+		}
         }
         return '';
     }

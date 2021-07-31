@@ -26,7 +26,7 @@ if (isset($_POST['text']))
 $text = file_get_contents($file);
 
 ?>
-origin, destination, Bulbar Involvement Y/N, Upper Limb Impairment Y/N, Wheelchair Y/N, Cane/Walker Y/N, Non-invasive Ventilation Y/N, is_assign, day, role
+origin, destination, Bulbar Involvement Y/N, Upper Limb Impairment Y/N, Wheelchair Y/N, Cane/Walker Y/N, Non-invasive Ventilation Y/N, day, role
 <!-- HTML form -->
 <form action="" method="post">
 <textarea name="text" style="width: 50%; height:75%;"><?php echo htmlspecialchars($text) ?></textarea>
