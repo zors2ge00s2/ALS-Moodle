@@ -24,7 +24,7 @@ COPY ./foreground.sh /etc/apache2/foreground.sh
 
 RUN apt-get update && \
 	apt-get -y install mysql-client pwgen python-setuptools curl git unzip apache2 php \
-		php-gd libapache2-mod-php postfix wget supervisor php-pgsql curl libcurl4 \
+		php-gd libapache2-mod-php postfix wget supervisor php-pgsql curl libcurl4 vim\
 		libcurl3-dev php-curl php-xmlrpc php-intl php-mysql git-core php-xml php-mbstring php-zip php-soap cron php-ldap && \
 	cd /tmp && \
 	git clone --single-branch --branch master https://github.com/zors2ge00s2/ALS-Moodle.git --depth=1 && \
