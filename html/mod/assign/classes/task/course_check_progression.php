@@ -72,6 +72,7 @@ GROUP BY mapping.userid) as a RIGHT JOIN mdl_user as b ON a.userid = b.id';
 			if($role->roleid == 12 OR $role->roleid ==13){
 				$submissions_required = FALSE;
 			}
+
 			if($submissions_required){
 			//$role->roleid = 9;
 			echo "<br>";
